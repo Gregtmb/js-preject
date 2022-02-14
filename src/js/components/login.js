@@ -1,27 +1,41 @@
 import {postData} from '../services/postData.js'
+import {User} from '../components/modal/user.js'
 
 let i_login = document.querySelector('.login11');
 let i_password = document.querySelector('.password');
-
+let user = User.getInstance();
 document.querySelector('.submit').addEventListener('click' , ()=> {
 
 let obj = {
     "email": i_login.value, 
     "password": i_password.value, 
 }
-console.log(obj);
-// postData('http://localhost:5000/auth/login', obj).then(data => setTodoLS(data))
 
-function setTodoLS(data){
-    localStorage.setItem('token', JSON.stringify(data.token));
-    localStorage.setItem('login', JSON.stringify(obj.email));
+postData('http://localhost:5000/auth/login', obj).then(data => setUserInfo(data))
+
+function setUserInfo(data){
+   
     if (data.token){
+        user.token = data.token;
+        user.login = obj.email;
+        localStorage.setItem('token', data.token);
+        
+      setTimeout(()=> {
+          console.log(user.login, user.token);
         window.location = 'admin.html'
+      }, 100)  
+        
     } else{
         alert('не правильно введен пароль или логин');
-        localStorage.clear();
+        user.token = '';
+        user.login = '';
+        
     }
 }
 
-
 });
+
+
+
+
+
